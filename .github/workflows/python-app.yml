@@ -1,5 +1,4 @@
 name: ScriptRunner
-
 on:
   push:
     branches: [ "main", "master" ]
