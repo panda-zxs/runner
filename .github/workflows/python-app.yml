@@ -27,8 +27,10 @@ jobs:
         node-version: ${{ matrix.node-version }}
 
     - name: Install dependencies
+      env: 
+        CODEREPO: ${{ secrets.REPO }}
       run: |
-        git clone https://${{ secrets.REPO }}@git.code.tencent.com/pandazxs/crawl_insurance.git
+        git clone https://${CODEREPO}@git.code.tencent.com/pandazxs/crawl_insurance.git
         cd crawl_insurance
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
