@@ -51,7 +51,7 @@ def main():
     if length == 0:
         logger.info('队列为空, 退出')
         return
-    tasks_per_worker = length // worker_tasks_nums
+    tasks_per_worker = length // worker_tasks_nums + 1
     logger.info(f'需要worker数量 {tasks_per_worker}')
     nochange = 0
     for name, repo in REPO_LIST:
