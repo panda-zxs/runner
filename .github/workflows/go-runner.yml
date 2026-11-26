@@ -1,0 +1,46 @@
+name: ScriptRunner
+
+on:
+  push:
+    branches: [ "main", "master" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: INS
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+          cache: false
+
+      - name: Cache Go modules and build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: go-runner-${{ runner.os }}-v1
+          restore-keys: |
+            go-runner-${{ runner.os }}-
+
+      - name: Clone iachinaCrawl and run Go worker
+        run: |
+          if git clone --depth 1 --filter=blob:none --no-checkout ${{ secrets.REPO }} iachinaCrawl; then
+            cd iachinaCrawl
+            git sparse-checkout set --cone cmd internal
+            git checkout
+          else
+            rm -rf iachinaCrawl
+            git clone --depth 1 ${{ secrets.REPO }} iachinaCrawl
+            cd iachinaCrawl
+          fi
+          cp .env.sample .env
+          go run ./cmd/iachina worker
